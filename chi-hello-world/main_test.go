@@ -32,6 +32,6 @@ func TestHelloWorld(t *testing.T) {
     checkResponseCode(t, http.StatusOK, response.Code)
     
     if "Hello World!" != response.Body.String() {
-        t.Errorf("Got %v esnt %v")
+        t.Errorf("Got %v esnt %v", response.Body.String(), "Hello World!")
     }
 }
