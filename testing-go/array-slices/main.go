@@ -19,3 +19,18 @@ func SumAll(lis ...[]int) []int {
 
    return result
 }
+
+
+func SumAllTails(lis ...[]int) []int {
+    
+    result := []int{}
+    for _, aList := range lis {
+        if len(aList) == 0 {
+            result = append(result, 0)
+        } else {
+            result = append(result, Sum(aList[1:]))
+        }
+    }
+
+   return result
+}

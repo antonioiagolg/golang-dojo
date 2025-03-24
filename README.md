@@ -3,7 +3,7 @@
 Here I keep all my golang projects I do to practice. Feel free to check it out.
 Any feedback is greatly appreciated.
 
-* chi-hello-world
+* Chi Hello World with Tests
 * Workspaces in Golang
-
-
+* Testing in Golang
+* Hello Xgb 
