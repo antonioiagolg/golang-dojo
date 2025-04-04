@@ -7,4 +7,4 @@ Any feedback is greatly appreciated.
 * Workspaces in Golang
 * Testing in Golang
 * Hello Xgb 
-* Gin Hello World
+* Gin Hello World with Tests
