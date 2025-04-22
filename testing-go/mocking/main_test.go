@@ -1,30 +1,69 @@
 package main
 
-import "testing"
-import "bytes"
+import (
+	"bytes"
+	"reflect"
+	"testing"
+)
 
+const sleep = "sleep"
+const write = "write"
 
 type SpySleeper struct {
-    Calls int
+	Calls int
+}
+
+type CountdownOrderExecution struct {
+	Calls []string
+}
+
+func (coe *CountdownOrderExecution) Write(b []byte) (int, error) {
+	coe.Calls = append(coe.Calls, write)
+	return 0, nil
+}
+
+func (coe *CountdownOrderExecution) Sleep() {
+	coe.Calls = append(coe.Calls, sleep)
 }
 
 func (ss *SpySleeper) Sleep() {
-    ss.Calls++
+	ss.Calls++
 }
 
 func TestCountdown(t *testing.T) {
-	buffer := &bytes.Buffer{}
-    sleeper := &SpySleeper{}
+	t.Run("Checking the correct number of call on sleep", func(t *testing.T) {
+		buffer := &bytes.Buffer{}
+		sleeper := &SpySleeper{}
 
-	Countdown(buffer, sleeper)
-	got := buffer.String()
-	want := "3\n2\n1\nGo!"
+		Countdown(buffer, sleeper)
+		got := buffer.String()
+		want := "3\n2\n1\nGo!"
 
-	if got != want {
-		t.Errorf("got %q, want %q", got, want)
-	}
+		if got != want {
+			t.Errorf("got %q, want %q", got, want)
+		}
 
-    if sleeper.Calls != 3 {
-        t.Errorf("got %d but want 3 calls", sleeper.Calls)
-    }
+		if sleeper.Calls != 3 {
+			t.Errorf("got %d but want 3 calls", sleeper.Calls)
+		}
+	})
+
+    t.Run("Checking the order of calls", func(t *testing.T) {
+        coe := &CountdownOrderExecution{}
+        Countdown(coe, coe)
+        want := []string{
+            "write", // 3
+            "sleep",
+            "write", // 2
+            "sleep",
+            "write", // 1
+            "sleep",
+            "write", // Go!
+        }
+
+        if !reflect.DeepEqual(want, coe.Calls) {
+            t.Error("Wrong call sequence")
+        }
+    })
+
 }
