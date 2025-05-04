@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"reflect"
 	"testing"
+	"time"
 )
 
 const sleep = "sleep"
@@ -11,6 +12,14 @@ const write = "write"
 
 type SpySleeper struct {
 	Calls int
+}
+
+type SpyTimer struct {
+	timeSlept time.Duration
+}
+
+func (st *SpyTimer) Sleep(t time.Duration) {
+	st.timeSlept = t
 }
 
 type CountdownOrderExecution struct {
@@ -65,5 +74,18 @@ func TestCountdown(t *testing.T) {
             t.Error("Wrong call sequence")
         }
     })
+
+}
+
+func TestConfigurableSleep(t *testing.T) {
+	timeSlept := 5 * time.Second
+	spyTimer := &SpyTimer{}
+	
+	configSleeper := &ConfigurableSleeper{duration: timeSlept, sleep: spyTimer.Sleep}
+	configSleeper.Sleep()
+
+	if spyTimer.timeSlept != timeSlept {
+		t.Errorf("Wrong time slept")
+	}
 
 }
